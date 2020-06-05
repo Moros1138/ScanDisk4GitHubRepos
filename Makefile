@@ -1,6 +1,3 @@
-
-EXECUTABLE	:= main
-
 RELEASE		:= -O3
 DEBUG		:= -ggdb3 -Og
 STATIC		:= -Bstatic -static-libgcc -static-libstdc++
@@ -24,13 +21,21 @@ LIB			:= lib
 OBJ     	:= obj
 RES			:= res
 
+ifneq ($(OS),Windows_NT)
+    EXECUTABLE	:= main
+	CLEAN_COMMAND := -rm $(BIN)/* $(OBJ)/*.o
+else
+    EXECUTABLE	  := main.exe
+	CLEAN_COMMAND := del $(BIN)\*.exe $(OBJ)\*.o
+endif
+
 #LIBRARIES	:= -lGL -lGLEW -lSDL2 -lSOIL -lassimp -lX11 -lpthread -lpng
 LIBRARIES	:=
 
-SOURCES		:= $(shell find $(SRC) -type f -name *.cpp)
+SOURCES		:= $(wildcard $(SRC)/*.cpp)
 OBJECTS     := $(patsubst $(SRC)/%,$(OBJ)/%,$(SOURCES:.cpp=.o))
 
-DEPSRC		:= $(shell find $(INC) -type f -name *.hpp)
+DEPSRC		:= $(wildcard $(INC)/*.hpp)
 DEPENDENCIES:= $(DEPSRC:.hpp)
 
 # if you want to find out the value of a makefile variable
@@ -45,7 +50,7 @@ run: all
 	./$(BIN)/$(EXECUTABLE)
 
 clean:
-	-rm $(BIN)/* $(OBJ)/*.o
+	$(CLEAN_COMMAND)
 
 # Compile only
 $(OBJ)/%.o : $(SRC)/%.cpp $(DEPENDENCIES)
@@ -54,4 +59,3 @@ $(OBJ)/%.o : $(SRC)/%.cpp $(DEPENDENCIES)
 # Link the object files and libraries
 $(BIN)/$(EXECUTABLE) : $(OBJECTS)
 	$(CXX) $(CXX_FLAGS) -o $(BIN)/$(EXECUTABLE) $^ $(LIBRARIES) $(LIB_FLAG)
-
