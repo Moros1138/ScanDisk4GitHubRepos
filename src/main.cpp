@@ -58,7 +58,7 @@ int main( int argc, char **argv) {
 
     if ( argc < 2) {
         std::cout << "\nEnter a path to recursevely search from\n";
-        exit(0);
+        return 0;
     }
 
     fs::path mPath = argv[1];
@@ -119,5 +119,5 @@ int main( int argc, char **argv) {
     std::cout << "  GitHub repos    : " << gitReposCount << "\n";
     std::cout << "  With remotes    : " << remoteUrlCount << "\n";
 
-    return 1;
+    return 0;
 }
