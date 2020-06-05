@@ -3,7 +3,6 @@
 #include <fstream>
 #include <chrono>
 #include <cctype>
-// #include <algorithm>
 
 namespace fs = std::filesystem;
 
@@ -62,14 +61,10 @@ int main( int argc, char **argv) {
         exit(0);
     }
 
-//    fs::recursive_directory_iterator(argv[1]) ;
     fs::path mPath = argv[1];
     fs::path mPathWithConfig;
     fs::path configFile;
-
     std::string remoteUrl;
-
-    fs::file_status s;
 
     bool hasRemoteUrl = false;
     int remoteUrlCount = 0;
@@ -77,13 +72,12 @@ int main( int argc, char **argv) {
     int filesCheckedCount = 0;
     int filesIsSymlinksCount = 0;
 
+    // Just to time the scan
     std::chrono::time_point<std::chrono::system_clock> scanStart;
-
     scanStart = std::chrono::system_clock::now();
 
-// search took 6 minutes without remote url check
-
-   for(auto& p: fs::recursive_directory_iterator(mPath, fs::directory_options::skip_permission_denied )) {
+    // Start the recursively scan loop
+    for(auto& p: fs::recursive_directory_iterator(mPath, fs::directory_options::skip_permission_denied )) {
 
        filesCheckedCount++;
 
@@ -109,13 +103,11 @@ int main( int argc, char **argv) {
                     if( GetRemoteUrl( configFile, remoteUrl)) {
                         hasRemoteUrl = true;
                         remoteUrlCount++;
-                        // std::cout << "Remote url: " << remoteUrl << "\n";
                     }
                 }
 
                 std::cout << p.path().parent_path() << ", " << remoteUrl << "\n";
             }
-
        }
    }
 
