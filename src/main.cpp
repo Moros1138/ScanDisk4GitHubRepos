@@ -1,10 +1,32 @@
+#define USE_EXPERIMENTAL_FS
+
+#if defined(_WIN32)
+	#if _MSC_VER >= 1920 && _MSVC_LANG >= 201703L
+		#undef USE_EXPERIMENTAL_FS
+	#endif
+#endif
+
+#if defined(__linux__) || defined(__MINGW32__) || defined(__EMSCRIPTEN__) || defined(__FreeBSD__)
+	#if __cplusplus >= 201703L
+		#undef USE_EXPERIMENTAL_FS
+	#endif
+#endif
+
+#if defined(USE_EXPERIMENTAL_FS)
+	// C++14
+	#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+	#include <experimental/filesystem>
+	namespace fs = std::experimental::filesystem::v1;
+#else
+	// C++17
+	#include <filesystem>
+	namespace fs = std::filesystem;
+#endif
+
 #include <iostream>
-#include <filesystem>
 #include <fstream>
 #include <chrono>
 #include <cctype>
-
-namespace fs = std::filesystem;
 
 // One known criteria:  everything after the equal sign is the url
 void UrlFromString( std::string& strIn, std::string& strOut, size_t foundAt) {
